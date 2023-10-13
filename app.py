@@ -40,16 +40,23 @@ def callback():
 def handle_message(event):
     user_message = event.message.text
     keyword = user_message
-    img_url = download_images_and_upload_to_github(1, img_keyword, github_token)
+    messages = []
+
+    
+    img_url, message_text = download_images_and_upload_to_github(1, img_keyword, github_token)
+    messages_text = "\n".join(messages_text)
     img_message = ImageSendMessage(
                               original_content_url=f'{img_url}',  
                               preview_image_url=f'{img_url}')
-    line_bot_api.reply_message(event.reply_token, img_message)
+    messages = [messages_text , img_message]
+    
+    line_bot_api.reply_message(event.reply_token, messages)
    
 
 
 
 def download_images_and_upload_to_github(round, keyword, github_token):
+    message_text = []
     # Initialize the browser
     browser = init_browser(img_keyword)
     local_folder = 'imgs2'
@@ -92,11 +99,12 @@ def download_images_and_upload_to_github(round, keyword, github_token):
                                     # Save the image locally
                                     local_filename = f'./{local_folder}/{img_keyword}.jpg'
                                     image.save(local_filename)
+                                    message_text.append('save file done')
                                     
                                     # Upload the image to GitHub
-                                    upload_image_to_github(local_filename, github_repo, github_path, github_token)
+                                    message_text = upload_image_to_github(local_filename, github_repo, github_path, github_token, message_text)
                                     img_url = f'https://raw.githubusercontent.com/{github_repo}/main/img2/{img_keyword}.jpg'
-                                    return img_url
+                                    return img_url, message_text
                                     break
                     else:
                         if len(img_url) <= 200:
@@ -107,9 +115,9 @@ def download_images_and_upload_to_github(round, keyword, github_token):
                                     with open(local_filename, 'wb') as file:
                                         file.write(r.content)
                                         file.close()
-                                        upload_image_to_github(local_filename, github_repo, github_path, github_token)
+                                        message_text = upload_image_to_github(local_filename, github_repo, github_path, github_token)
                                         img_url = f'https://raw.githubusercontent.com/{github_repo}/main/img2/{img_keyword}.jpg'
-                                        return img_url
+                                        return img_url, message_text
                                         break
         except StaleElementReferenceException:
             print("出現StaleElementReferenceException錯誤，重新定位元素")
@@ -119,7 +127,7 @@ def download_images_and_upload_to_github(round, keyword, github_token):
     browser.close()
     print("爬取完成") 
 
-def upload_image_to_github(local_filename, github_repo, github_path, github_token):
+def upload_image_to_github(local_filename, github_repo, github_path, github_token, message_text):
     with open(local_filename, 'rb') as file:
         content = file.read()
 
@@ -137,10 +145,11 @@ def upload_image_to_github(local_filename, github_repo, github_path, github_toke
     response = requests.put(url, headers=headers, json=data)
 
     if response.status_code == 200:
-        print("Image uploaded to GitHub successfully.")
+        message_text.append("Image uploaded to GitHub successfully.")
     else:
-        print("Failed to upload image to GitHub.")
-        print(response.text)
+        message_text.append("Failed to upload image to GitHub.")
+        message_text.append(response.text)
+    return message_text
 
   # 主程式
 if __name__ == '__main__':
