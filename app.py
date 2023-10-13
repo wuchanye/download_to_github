@@ -57,7 +57,8 @@ def handle_message(event):
         keyword = user_message  # 將用戶的回覆儲存在 keyword 變數中
         current_state = NORMAL  # 回復正常狀態
         search_results, messages = search(keyword)
-        
+
+        title = '請選擇想查詢的食物代號：\n'
         for i in range(len(messages) - 1, 0, -1):
             messages[i] = messages[i - 1]
         messages[0] = title
