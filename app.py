@@ -68,7 +68,7 @@ def handle_message(event):
         line_bot_api.reply_message(event.reply_token, message)
 
         filename = save_file(messages_text)
-        github_repo = 'wuchanye/test'
+        github_repo = 'wuchanye/download_to_github'
         github_path = 'imgs2/' + keyword + '.jpg'
         github_token = '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'
         upload_image_to_github(filename, github_repo, github_path, github_token)
