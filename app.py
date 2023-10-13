@@ -45,12 +45,10 @@ def handle_message(event):
     
     img_url, message_text = download_images_and_upload_to_github(1, img_keyword, github_token)
     messages_text = "\n".join(messages_text)
-    img_message = ImageSendMessage(
-                              original_content_url=f'{img_url}',  
-                              preview_image_url=f'{img_url}')
-    messages = [messages_text , img_message]
+    #img_message = ImageSendMessage(original_content_url=f'{img_url}',  preview_image_url=f'{img_url}')
+    #messages = [messages_text , img_message]
     
-    line_bot_api.reply_message(event.reply_token, messages)
+    line_bot_api.reply_message(event.reply_token, messages_text)
    
 
 
