@@ -43,7 +43,7 @@ def handle_message(event):
     messages = []
 
     
-    img_url, message_text = download_images_and_upload_to_github(1, img_keyword, github_token)
+    img_url, message_text = download_images_and_upload_to_github(1, keyword, github_token)
     messages_text = "\n".join(messages_text)
     #img_message = ImageSendMessage(original_content_url=f'{img_url}',  preview_image_url=f'{img_url}')
     #messages = [messages_text , img_message]
@@ -51,12 +51,36 @@ def handle_message(event):
     line_bot_api.reply_message(event.reply_token, messages_text)
    
 
-
+def init_browser(keyword):
+    url = f'https://www.google.com.hk/search?q={img_keyword}&tbm=isch'
+    
+    chrome_options = webdriver.ChromeOptions()
+    chrome_options.add_argument("--disable-infobars") # 禁用一些瀏覽器的信息欄
+    
+    # 創建一個帶有特定配置的 Chrome 瀏覽器實例
+    browser = webdriver.Chrome(options=chrome_options)
+    
+    browser.get(url)
+    browser.maximize_window()
+    
+    return browserdef init_browser(img_keyword):
+    url = f'https://www.google.com.hk/search?q={img_keyword}&tbm=isch'
+    
+    chrome_options = webdriver.ChromeOptions()
+    chrome_options.add_argument("--disable-infobars") # 禁用一些瀏覽器的信息欄
+    
+    # 創建一個帶有特定配置的 Chrome 瀏覽器實例
+    browser = webdriver.Chrome(options=chrome_options)
+    
+    browser.get(url)
+    browser.maximize_window()
+    
+    return browser
 
 def download_images_and_upload_to_github(round, keyword, github_token):
     message_text = []
     # Initialize the browser
-    browser = init_browser(img_keyword)
+    browser = init_browser(keyword)
     local_folder = 'imgs2'
     
     if not os.path.exists(local_folder):
