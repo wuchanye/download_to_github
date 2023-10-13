@@ -69,8 +69,8 @@ def handle_message(event):
 
         filename = save_file(messages_text)
         github_repo = 'wuchanye/download_to_github'
-        github_path = 'imgs2/' + keyword + '.jpg'
-        github_token = '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'
+        github_path = 'imgs2/'+keyword+'.jpg'
+        github_token = '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'
         upload_image_to_github(filename, github_repo, github_path, github_token)
     else:
         if user_message == ("@查詢"):
