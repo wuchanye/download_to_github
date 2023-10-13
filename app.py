@@ -49,7 +49,7 @@ def handle_message(event):
 
 
 
-def download_images_and_upload_to_github(round=1, keyword, github_token):
+def download_images_and_upload_to_github(round, keyword, github_token):
     # Initialize the browser
     browser = init_browser(img_keyword)
     local_folder = 'imgs2'
