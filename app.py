@@ -166,7 +166,7 @@ def save_file(messages_text):
         os.makedirs(local_folder)
         
     filename = f'./{local_folder}/mytext.txt'
-    with open(fil_name, "w", encoding="utf-8") as file:
+    with open(filname, "w", encoding="utf-8") as file:
         # 写入文本内容到文件
         file.write(messages_text)
     return filename
