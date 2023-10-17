@@ -94,49 +94,39 @@ def upload_image_to_github(image_content, keyword, github_token):
     img_message = None
     
     
-    # 獲取現有文件的 SHA 值
-    url_get_sha = f'https://api.github.com/repos/{github_username}/{github_repo}/contents/{github_folder}/{filename}'
-    headers_get_sha = {
+    sha1 = hashlib.sha1()
+    sha1.update(image_content)
+    sha1_hash = sha1.hexdigest()
+    
+    url = f'https://api.github.com/repos/{github_username}/{github_repo}/contents/{github_folder}/{filename}'
+    headers = {
         'Authorization': f'Bearer {github_token}',
-        'Content-Type': 'application/json',
     }
     
-    response_get_sha = requests.get(url_get_sha, headers=headers_get_sha)
+    response = requests.get(url, headers=headers)
+    existing_file_data = response.json()
+    existing_sha = existing_file_data.get('sha', '')
     
-    if response_get_sha.status_code == 200:
-        sha_data = response_get_sha.json()
-        sha_value = sha_data.get('sha')
+    if existing_sha != sha1_hash:
         
-        if sha_value is not None and sha_value != "":
-            url = f'https://api.github.com/repos/{github_username}/{github_repo}/contents/{github_folder}/{filename}'
-            headers = {
-                'Authorization': f'Bearer {github_token}',
-                'Content-Type': 'application/json',
-            }
+        headers = {
+            'Authorization': f'Bearer {github_token}',
+            'Content-Type': 'application/json',
+        }
 
-            data = {
-                'message': 'Update image',
-                'content': base64.b64encode(image_content).decode('utf-8'),
-                'sha': sha_value  # 傳遞 SHA 值
-            }
+        data = {
+            'message': 'Update image',
+            'content': base64.b64encode(image_content).decode('utf-8'),
+            'sha': existing_sha,
+        }
 
-            response = requests.put(url, headers=headers, json=data)
-        
-            if response.status_code == 200 or response.status_code == 201:
-                image_url = response.json().get('content').get('download_url')
-                img_message = ImageSendMessage(
-                    original_content_url=image_url,
-                    preview_image_url=image_url
-                )
-                print("文件已成功更新到GitHub存储库的文件夹。")
-            else:
-                print(f"上传文件失败，HTTP响应代码: {response.status_code}")
-                print(f"响应内容: {response.text}")
-                img_message = TextSendMessage(text="上傳圖片失敗。")
+        response = requests.put(url, headers=headers, json=data)
+
+        if response.status_code == 200 or 201:
+            print("文件已成功更新到GitHub存储库的文件夹。")
         else:
-            print(f"SHA 值为空，文件不存在。")
-    else:
-        print(f"未找到文件，HTTP响应代码: {response_get_sha.status_code}")
+            print(f"上传文件失败，HTTP响应代码: {response.status_code}")
+            print(f"响应内容: {response.text}")
     return img_message
 
 # 主程式
