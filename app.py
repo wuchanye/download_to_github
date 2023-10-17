@@ -7,6 +7,7 @@ import os
 import requests
 import base64
 from bs4 import BeautifulSoup
+import hashlib
 
 
 from flask import Flask
@@ -122,11 +123,17 @@ def upload_image_to_github(image_content, keyword, github_token):
 
         response = requests.put(url, headers=headers, json=data)
 
-        if response.status_code == 200 or 201:
+        if response.status_code == 200 or response.status_code == 201:
+            image_url = response.json().get('content').get('download_url')
+            img_message = ImageSendMessage(
+                original_content_url=image_url,
+                preview_image_url=image_url
+            )
             print("文件已成功更新到GitHub存储库的文件夹。")
         else:
             print(f"上传文件失败，HTTP响应代码: {response.status_code}")
             print(f"响应内容: {response.text}")
+            img_message = TextSendMessage(text="上傳圖片失敗。")
     return img_message
 
 # 主程式
