@@ -91,6 +91,7 @@ def upload_image_to_github(image_content, keyword, github_token):
     github_repo = 'download_to_github'
     github_folder = 'img2'
     filename = keyword + '.jpg'
+    img_message = None
     
     
     # 獲取現有文件的 SHA 值
