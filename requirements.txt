@@ -6,3 +6,4 @@ Pillow
 pyimgur
 requests
 Gunicorn
+beautifulsoup4
