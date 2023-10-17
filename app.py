@@ -74,10 +74,14 @@ def download_images_with_beautifulsoup(round, img_keyword):
                 # 遍歷元素, 鎖定屬性
                 img_url = element.get('src')
                 if isinstance(img_url, str) and img_url.startswith('https://'): # 留下https://開頭的url
-                    r = requests.get(img_url)
-                    if len(r.content) < max_image_size: 
-                        img_content = r.content # 將二進制內容儲存在參數
-                        break
+                    if data_url_count == 0:
+                        data_url_count += 1
+                        continue
+                    else:
+                        r = requests.get(img_url)
+                        if len(r.content) < max_image_size: 
+                            img_content = r.content # 將二進制內容儲存在參數
+                            break
         except Exception as e:
             print(f"出现错误：{str(e)}")
             continue
