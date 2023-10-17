@@ -40,7 +40,7 @@ def handle_message(event):
     global keyword
     
     if current_state == WAITING_FOR_FOOD_NAME:
-        keyword = user_message  # 將用戶的回覆儲存在 keyword 變數
+        keyword = user_message  # 將用戶的回覆儲存在 keyword 變數中
         current_state = NORMAL  # 回復正常狀態
         img_content = download_images_with_beautifulsoup(1, keyword)
         
