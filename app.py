@@ -61,7 +61,8 @@ def download_images_with_beautifulsoup(round, img_keyword):
     url = f'https://www.google.com.hk/search?q={img_keyword}&tbm=isch'
     resp = requests.get(url)
     soup = BeautifulSoup(resp.text, 'lxml')
-    
+
+    data_url_count = 0
     max_image_size = 1024 * 1024
     img_content = None  # 用于存储图像内容
     
